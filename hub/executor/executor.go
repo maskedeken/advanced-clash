@@ -121,6 +121,7 @@ func updateDNS(c *config.DNS) {
 		Pool:         c.FakeIPRange,
 		Hosts:        c.Hosts,
 		FallbackFilter: dns.FallbackFilter{
+			IPSet:     c.FallbackFilter.IPSet,
 			GeoIP:     c.FallbackFilter.GeoIP,
 			GeoIPCode: c.FallbackFilter.GeoIPCode,
 			IPCIDR:    c.FallbackFilter.IPCIDR,

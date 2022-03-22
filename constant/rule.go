@@ -5,6 +5,7 @@ const (
 	Domain RuleType = iota
 	DomainSuffix
 	DomainKeyword
+	IPSET
 	GEOIP
 	IPCIDR
 	SrcIPCIDR
@@ -25,6 +26,8 @@ func (rt RuleType) String() string {
 		return "DomainSuffix"
 	case DomainKeyword:
 		return "DomainKeyword"
+	case IPSET:
+		return "IPSet"
 	case GEOIP:
 		return "GeoIP"
 	case IPCIDR:

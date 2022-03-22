@@ -308,6 +308,7 @@ type NameServer struct {
 }
 
 type FallbackFilter struct {
+	IPSet     []string
 	GeoIP     bool
 	GeoIPCode string
 	IPCIDR    []*net.IPNet
@@ -350,6 +351,9 @@ func NewResolver(config Config) *Resolver {
 	}
 
 	fallbackIPFilters := []fallbackIPFilter{}
+	for _, ipset := range config.FallbackFilter.IPSet {
+		fallbackIPFilters = append(fallbackIPFilters, NewIPSetFilter(ipset))
+	}
 	if config.FallbackFilter.GeoIP {
 		fallbackIPFilters = append(fallbackIPFilters, &geoipFilter{
 			code: config.FallbackFilter.GeoIPCode,

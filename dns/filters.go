@@ -4,12 +4,26 @@ import (
 	"net"
 	"strings"
 
+	"github.com/Dreamacro/clash/component/ipset"
 	"github.com/Dreamacro/clash/component/mmdb"
 	"github.com/Dreamacro/clash/component/trie"
 )
 
 type fallbackIPFilter interface {
 	Match(net.IP) bool
+}
+
+type ipsetFilter struct {
+	ipset *ipset.IPSetBinding
+}
+
+func (ipf *ipsetFilter) Match(ip net.IP) bool {
+	return !ipf.ipset.Test(ip)
+}
+
+func NewIPSetFilter(set string) *ipsetFilter {
+	binding := &ipset.IPSetBinding{SetName: set}
+	return &ipsetFilter{ipset: binding}
 }
 
 type geoipFilter struct {
