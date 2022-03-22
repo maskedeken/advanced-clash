@@ -20,6 +20,7 @@ const (
 	Socks5
 	Http
 	Vmess
+	Vless
 	Trojan
 
 	Relay
