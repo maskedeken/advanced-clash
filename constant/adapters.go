@@ -142,6 +142,8 @@ func (at AdapterType) String() string {
 		return "Http"
 	case Vmess:
 		return "Vmess"
+	case Vless:
+		return "Vless"
 	case Trojan:
 		return "Trojan"
 
