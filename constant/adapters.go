@@ -143,7 +143,7 @@ func (at AdapterType) String() string {
 	case Vmess:
 		return "Vmess"
 	case Vless:
-		return "Vless"
+		return "VLESS"
 	case Trojan:
 		return "Trojan"
 
