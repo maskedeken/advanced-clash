@@ -4,6 +4,8 @@ go 1.18
 
 require (
 	github.com/Dreamacro/go-shadowsocks2 v0.1.7
+	github.com/ameshkov/dnscrypt/v2 v2.0.1
+	github.com/ameshkov/dnsstamps v1.0.3
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.0
 	github.com/go-chi/render v1.0.1
@@ -25,6 +27,9 @@ require (
 )
 
 require (
+	github.com/AdguardTeam/golibs v0.4.2 // indirect
+	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
+	github.com/aead/poly1305 v0.0.0-20180717145839-3fee0db0b635 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/oschwald/maxminddb-golang v1.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -35,3 +40,5 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
 )
+
+replace github.com/Dreamacro/go-shadowsocks2 => github.com/maskedeken/go-shadowsocks2 v0.1.8-0.20210406012537-ad7ec48a3b9f

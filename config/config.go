@@ -21,6 +21,7 @@ import (
 	"github.com/Dreamacro/clash/log"
 	R "github.com/Dreamacro/clash/rule"
 	T "github.com/Dreamacro/clash/tunnel"
+	"github.com/ameshkov/dnsstamps"
 
 	"gopkg.in/yaml.v2"
 )
@@ -478,25 +479,60 @@ func parseNameServer(servers []string) ([]dns.NameServer, error) {
 		}
 
 		var addr, dnsNetType string
-		switch u.Scheme {
+		scheme := u.Scheme
+		host := u.Host
+		path := u.Path
+
+		if scheme == "sdns" {
+			stamp, err := dnsstamps.NewServerStampFromString(u.String())
+			if err != nil {
+				// not valid sdns
+				return nil, err
+			}
+
+			switch stamp.Proto {
+			case dnsstamps.StampProtoTypeDNSCrypt:
+				scheme = "dnscrypt"
+			case dnsstamps.StampProtoTypeDoH:
+				scheme = "https"
+				host = stamp.ServerAddrStr
+				path = stamp.Path
+			case dnsstamps.StampProtoTypeTLS:
+				scheme = "tls"
+				host = stamp.ServerAddrStr
+			case dnsstamps.StampProtoTypeDoQ:
+				scheme = "quic"
+				host = stamp.ServerAddrStr
+			case dnsstamps.StampProtoTypePlain:
+				scheme = "udp"
+				host = stamp.ServerAddrStr
+			default:
+				return nil, errors.New("Unsupported DNS protocol")
+			}
+		}
+
+		switch scheme {
 		case "udp":
-			addr, err = hostWithDefaultPort(u.Host, "53")
+			addr, err = hostWithDefaultPort(host, "53")
 			dnsNetType = "" // UDP
 		case "tcp":
-			addr, err = hostWithDefaultPort(u.Host, "53")
+			addr, err = hostWithDefaultPort(host, "53")
 			dnsNetType = "tcp" // TCP
 		case "tls":
-			addr, err = hostWithDefaultPort(u.Host, "853")
+			addr, err = hostWithDefaultPort(host, "853")
 			dnsNetType = "tcp-tls" // DNS over TLS
 		case "https":
-			clearURL := url.URL{Scheme: "https", Host: u.Host, Path: u.Path}
+			clearURL := url.URL{Scheme: "https", Host: host, Path: path}
 			addr = clearURL.String()
 			dnsNetType = "https" // DNS over HTTPS
+		case "dnscrypt":
+			addr = u.String()
+			dnsNetType = "dnscrypt" // DNSCrypt
 		case "dhcp":
 			addr = u.Host
 			dnsNetType = "dhcp" // UDP from DHCP
 		default:
-			return nil, fmt.Errorf("DNS NameServer[%d] unsupport scheme: %s", idx, u.Scheme)
+			return nil, fmt.Errorf("DNS NameServer[%d] unsupport scheme: %s", idx, scheme)
 		}
 
 		if err != nil {

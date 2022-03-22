@@ -58,6 +58,11 @@ func transform(servers []NameServer, resolver *Resolver) []dnsClient {
 			continue
 		}
 
+		if s.Net == "dnscrypt" {
+			ret = append(ret, &dnsCryptClient{addr: s.Addr})
+			continue
+		}
+
 		host, port, _ := net.SplitHostPort(s.Addr)
 		ret = append(ret, &client{
 			Client: &D.Client{
