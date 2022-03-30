@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/Dreamacro/clash/common/pool"
+	u "github.com/Dreamacro/clash/common/uuid"
 	"github.com/Dreamacro/clash/transport/vmess"
 	"github.com/gofrs/uuid"
 )
@@ -110,7 +111,7 @@ func (c *Client) WriteHeader(w io.Writer, dst *vmess.DstAddr) error {
 
 // NewClient return Client instance
 func NewClient(option *Option) (*Client, error) {
-	uid, err := uuid.FromString(option.UUID)
+	uid, err := u.ParseString(option.UUID)
 	if err != nil {
 		return nil, err
 	}

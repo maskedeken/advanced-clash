@@ -6,6 +6,7 @@ import (
 	"net"
 	"runtime"
 
+	u "github.com/Dreamacro/clash/common/uuid"
 	"github.com/gofrs/uuid"
 )
 
@@ -82,7 +83,7 @@ func (c *Client) StreamConn(conn net.Conn, dst *DstAddr) (net.Conn, error) {
 
 // NewClient return Client instance
 func NewClient(config Config) (*Client, error) {
-	uid, err := uuid.FromString(config.UUID)
+	uid, err := u.ParseString(config.UUID)
 	if err != nil {
 		return nil, err
 	}
