@@ -23,7 +23,7 @@ import (
 	T "github.com/Dreamacro/clash/tunnel"
 	"github.com/ameshkov/dnsstamps"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // General config
@@ -480,6 +480,10 @@ func parseNameServer(servers []string) ([]dns.NameServer, error) {
 			return nil, fmt.Errorf("DNS NameServer[%d] format error: %s", idx, err.Error())
 		}
 
+		// parse with specific interface
+		// .e.g 10.0.0.1#en0
+		interfaceName := u.Fragment
+
 		var addr, dnsNetType string
 		scheme := u.Scheme
 		host := u.Host
@@ -544,8 +548,9 @@ func parseNameServer(servers []string) ([]dns.NameServer, error) {
 		nameservers = append(
 			nameservers,
 			dns.NameServer{
-				Net:  dnsNetType,
-				Addr: addr,
+				Net:       dnsNetType,
+				Addr:      addr,
+				Interface: interfaceName,
 			},
 		)
 	}

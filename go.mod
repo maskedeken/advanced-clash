@@ -3,7 +3,7 @@ module github.com/Dreamacro/clash
 go 1.18
 
 require (
-	github.com/Dreamacro/go-shadowsocks2 v0.1.8
+	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da
 	github.com/ameshkov/dnscrypt/v2 v2.0.1
 	github.com/ameshkov/dnsstamps v1.0.3
 	github.com/digineo/go-ipset/v2 v2.2.1
@@ -14,24 +14,23 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/insomniacslk/dhcp v0.0.0-20220504074936-1ca156eafb9f
 	github.com/mdlayher/netlink v1.1.1
-	github.com/miekg/dns v1.1.48
+	github.com/miekg/dns v1.1.49
 	github.com/oschwald/geoip2-golang v1.7.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.2
 	github.com/ti-mo/netfilter v0.2.0
 	go.etcd.io/bbolt v1.3.6
 	go.uber.org/atomic v1.9.0
 	go.uber.org/automaxprocs v1.5.1
-	golang.org/x/crypto v0.0.0-20220507011949-2cf3adece122
-	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6
-	gopkg.in/yaml.v2 v2.4.0
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
+	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
+	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/AdguardTeam/golibs v0.4.2 // indirect
-	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/aead/poly1305 v0.0.0-20180717145839-3fee0db0b635 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -43,7 +42,4 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.6-0.20210726203631-07bc1bf47fb2 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
-
-replace github.com/Dreamacro/go-shadowsocks2 => github.com/maskedeken/go-shadowsocks2 v0.1.8-0.20220510125132-f2842f00c200
