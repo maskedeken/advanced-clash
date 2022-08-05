@@ -35,6 +35,8 @@ const (
 
 	DefaultALPN     = "hysteria"
 	DefaultProtocol = "udp"
+
+	KeepAlivePeriod = 10 * time.Second
 )
 
 var rateStringRegexp = regexp.MustCompile(`^(\d+)\s*([KMGT]?)([Bb])ps$`)
@@ -153,7 +155,7 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 		MaxStreamReceiveWindow:         uint64(option.ReceiveWindowConn),
 		InitialConnectionReceiveWindow: uint64(option.ReceiveWindow),
 		MaxConnectionReceiveWindow:     uint64(option.ReceiveWindow),
-		KeepAlive:                      true,
+		KeepAlivePeriod:                KeepAlivePeriod,
 		DisablePathMTUDiscovery:        option.DisableMTUDiscovery,
 		EnableDatagrams:                true,
 	}
