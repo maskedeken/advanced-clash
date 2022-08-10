@@ -3,9 +3,7 @@ package outbound
 import (
 	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"regexp"
 	"strconv"
@@ -89,26 +87,9 @@ type HysteriaOption struct {
 	SNI                 string `proxy:"sni,omitempty"`
 	SkipCertVerify      bool   `proxy:"skip-cert-verify,omitempty"`
 	ALPN                string `proxy:"alpn,omitempty"`
-	CustomCA            string `proxy:"ca,omitempty"`
-	CustomCAString      string `proxy:"ca_str,omitempty"`
 	ReceiveWindowConn   int    `proxy:"recv_window_conn,omitempty"`
 	ReceiveWindow       int    `proxy:"recv_window,omitempty"`
 	DisableMTUDiscovery bool   `proxy:"disable_mtu_discovery,omitempty"`
-}
-
-func (c *HysteriaOption) Speed() (uint64, uint64, error) {
-	var up, down uint64
-	up = stringToBps(c.Up)
-	if up == 0 {
-		return 0, 0, fmt.Errorf("invaild upload speed: %s", c.Up)
-	}
-
-	down = stringToBps(c.Down)
-	if down == 0 {
-		return 0, 0, fmt.Errorf("invaild download speed: %s", c.Down)
-	}
-
-	return up, down, nil
 }
 
 func NewHysteria(option HysteriaOption) (*Hysteria, error) {
@@ -123,6 +104,7 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 	if option.SNI != "" {
 		serverName = option.SNI
 	}
+
 	tlsConfig := &tls.Config{
 		ServerName:         serverName,
 		InsecureSkipVerify: option.SkipCertVerify,
@@ -133,23 +115,7 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 	} else {
 		tlsConfig.NextProtos = []string{DefaultALPN}
 	}
-	if len(option.CustomCA) > 0 {
-		bs, err := ioutil.ReadFile(option.CustomCA)
-		if err != nil {
-			return nil, fmt.Errorf("hysteria %s load ca error: %w", addr, err)
-		}
-		cp := x509.NewCertPool()
-		if !cp.AppendCertsFromPEM(bs) {
-			return nil, fmt.Errorf("hysteria %s failed to parse ca_str", addr)
-		}
-		tlsConfig.RootCAs = cp
-	} else if option.CustomCAString != "" {
-		cp := x509.NewCertPool()
-		if !cp.AppendCertsFromPEM([]byte(option.CustomCAString)) {
-			return nil, fmt.Errorf("hysteria %s failed to parse ca_str", addr)
-		}
-		tlsConfig.RootCAs = cp
-	}
+
 	quicConfig := &quic.Config{
 		InitialStreamReceiveWindow:     uint64(option.ReceiveWindowConn),
 		MaxStreamReceiveWindow:         uint64(option.ReceiveWindowConn),
@@ -180,9 +146,14 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 		obfuscator = obfs.NewXPlusObfuscator([]byte(option.Obfs))
 	}
 
-	up, down, err := option.Speed()
-	if err != nil {
-		return nil, err
+	up := stringToBps(option.Up)
+	if up == 0 {
+		return nil, fmt.Errorf("invaild upload speed: %s", option.Up)
+	}
+
+	down := stringToBps(option.Down)
+	if down == 0 {
+		return nil, fmt.Errorf("invaild download speed: %s", option.Down)
 	}
 
 	client, err := core.NewClient(
@@ -193,6 +164,7 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 	if err != nil {
 		return nil, fmt.Errorf("hysteria %s create error: %w", addr, err)
 	}
+
 	return &Hysteria{
 		Base: &Base{
 			name:  option.Name,
