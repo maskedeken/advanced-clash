@@ -19,6 +19,7 @@ const (
 	SOCKS5
 	REDIR
 	TPROXY
+	TUN
 )
 
 type NetWork int
@@ -50,6 +51,8 @@ func (t Type) String() string {
 		return "Redir"
 	case TPROXY:
 		return "TProxy"
+	case TUN:
+		return "Tun"
 	default:
 		return "Unknown"
 	}

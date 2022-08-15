@@ -7,12 +7,14 @@ import (
 	"sync"
 
 	"github.com/Dreamacro/clash/adapter/inbound"
+	"github.com/Dreamacro/clash/config"
 	C "github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/listener/http"
 	"github.com/Dreamacro/clash/listener/mixed"
 	"github.com/Dreamacro/clash/listener/redir"
 	"github.com/Dreamacro/clash/listener/socks"
 	"github.com/Dreamacro/clash/listener/tproxy"
+	"github.com/Dreamacro/clash/listener/tun"
 	"github.com/Dreamacro/clash/log"
 )
 
@@ -29,6 +31,7 @@ var (
 	tproxyUDPListener *tproxy.UDPListener
 	mixedListener     *mixed.Listener
 	mixedUDPLister    *socks.UDPListener
+	tunAdapter        tun.Device
 
 	// lock for recreate function
 	socksMux  sync.Mutex
@@ -36,6 +39,7 @@ var (
 	redirMux  sync.Mutex
 	tproxyMux sync.Mutex
 	mixedMux  sync.Mutex
+	tunMux    sync.Mutex
 )
 
 type Ports struct {
@@ -60,6 +64,17 @@ func SetAllowLan(al bool) {
 
 func SetBindAddress(host string) {
 	bindAddress = host
+}
+
+func Tun() config.Tun {
+	if tunAdapter == nil {
+		return config.Tun{}
+	}
+
+	return config.Tun{
+		Enable: true,
+		Device: tunAdapter.Name(),
+	}
 }
 
 func ReCreateHTTP(port int, tcpIn chan<- C.ConnContext) {
@@ -299,6 +314,36 @@ func ReCreateMixed(port int, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.P
 	}
 
 	log.Infoln("Mixed(http+socks) proxy listening at: %s", mixedListener.Address())
+}
+
+func ReCreateTun(conf config.Tun, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) error {
+	tunMux.Lock()
+	defer tunMux.Unlock()
+
+	enable := conf.Enable
+	deviceName := conf.Device
+
+	if tunAdapter != nil {
+		if enable && deviceName == tunAdapter.Name() {
+			// Though we don't need to recreate tun device
+			return nil
+		}
+
+		tunAdapter.Close()
+		tunAdapter = nil
+	}
+
+	if !enable {
+		return nil
+	}
+
+	var err error
+	tunAdapter, err = tun.NewTun(deviceName, tcpIn, udpIn)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetPorts return the ports of proxy servers
