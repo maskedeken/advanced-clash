@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da
-	github.com/ameshkov/dnscrypt/v2 v2.0.1
+	github.com/ameshkov/dnscrypt/v2 v2.2.3
 	github.com/ameshkov/dnsstamps v1.0.3
 	github.com/digineo/go-ipset/v2 v2.2.1
 	github.com/go-chi/chi/v5 v5.0.7
@@ -43,3 +43,5 @@ require (
 	golang.org/x/tools v0.1.6-0.20210726203631-07bc1bf47fb2 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
+
+replace github.com/ameshkov/dnscrypt/v2 => github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3
