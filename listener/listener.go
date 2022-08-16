@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/Dreamacro/clash/adapter/inbound"
-	"github.com/Dreamacro/clash/config"
 	C "github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/listener/http"
 	"github.com/Dreamacro/clash/listener/mixed"
@@ -66,15 +65,12 @@ func SetBindAddress(host string) {
 	bindAddress = host
 }
 
-func Tun() config.Tun {
+func Tun() string {
 	if tunAdapter == nil {
-		return config.Tun{}
+		return ""
 	}
 
-	return config.Tun{
-		Enable: true,
-		Device: tunAdapter.Name(),
-	}
+	return tunAdapter.Name()
 }
 
 func ReCreateHTTP(port int, tcpIn chan<- C.ConnContext) {
@@ -316,15 +312,12 @@ func ReCreateMixed(port int, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.P
 	log.Infoln("Mixed(http+socks) proxy listening at: %s", mixedListener.Address())
 }
 
-func ReCreateTun(conf config.Tun, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) error {
+func ReCreateTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) error {
 	tunMux.Lock()
 	defer tunMux.Unlock()
 
-	enable := conf.Enable
-	deviceName := conf.Device
-
 	if tunAdapter != nil {
-		if enable && deviceName == tunAdapter.Name() {
+		if deviceName == tunAdapter.Name() {
 			// Though we don't need to recreate tun device
 			return nil
 		}
@@ -333,7 +326,7 @@ func ReCreateTun(conf config.Tun, tcpIn chan<- C.ConnContext, udpIn chan<- *inbo
 		tunAdapter = nil
 	}
 
-	if !enable {
+	if deviceName == "" {
 		return nil
 	}
 

@@ -30,7 +30,7 @@ type configSchema struct {
 	RedirPort   *int               `json:"redir-port"`
 	TProxyPort  *int               `json:"tproxy-port"`
 	MixedPort   *int               `json:"mixed-port"`
-	Tun         *config.Tun        `json:"tun"`
+	Tun         *string            `json:"tun"`
 	AllowLan    *bool              `json:"allow-lan"`
 	BindAddress *string            `json:"bind-address"`
 	Mode        *tunnel.TunnelMode `json:"mode"`

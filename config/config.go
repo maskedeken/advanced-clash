@@ -44,7 +44,7 @@ type Inbound struct {
 	RedirPort      int      `json:"redir-port"`
 	TProxyPort     int      `json:"tproxy-port"`
 	MixedPort      int      `json:"mixed-port"`
-	Tun            Tun      `json:"tun"`
+	Tun            string   `json:"tun"`
 	Authentication []string `json:"authentication"`
 	AllowLan       bool     `json:"allow-lan"`
 	BindAddress    string   `json:"bind-address"`
@@ -85,12 +85,6 @@ type FallbackFilter struct {
 type Profile struct {
 	StoreSelected bool `yaml:"store-selected"`
 	StoreFakeIP   bool `yaml:"store-fake-ip"`
-}
-
-// Tun config
-type Tun struct {
-	Enable bool   `yaml:"enable" json:"enable"`
-	Device string `yaml:"device" json:"device"`
 }
 
 // Experimental config
@@ -138,7 +132,7 @@ type RawConfig struct {
 	RedirPort          int          `yaml:"redir-port"`
 	TProxyPort         int          `yaml:"tproxy-port"`
 	MixedPort          int          `yaml:"mixed-port"`
-	Tun                Tun          `yaml:"tun"`
+	Tun                string       `yaml:"tun"`
 	Authentication     []string     `yaml:"authentication"`
 	AllowLan           bool         `yaml:"allow-lan"`
 	BindAddress        string       `yaml:"bind-address"`
