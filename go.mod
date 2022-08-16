@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da
-	github.com/ameshkov/dnscrypt/v2 v2.0.1
+	github.com/ameshkov/dnscrypt/v2 v2.2.3
 	github.com/ameshkov/dnsstamps v1.0.3
 	github.com/digineo/go-ipset/v2 v2.2.1
 	github.com/go-chi/chi/v5 v5.0.7
@@ -76,3 +76,5 @@ require (
 replace github.com/tobyxdd/hysteria => github.com/maskedeken/hysteria v0.0.0-20220814073127-68a3c2ae187b
 
 replace github.com/lucas-clemente/quic-go => github.com/tobyxdd/quic-go v0.28.2-0.20220806194731-5be744e08984
+
+replace github.com/ameshkov/dnscrypt/v2 => github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3
