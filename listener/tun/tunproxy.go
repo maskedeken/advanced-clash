@@ -119,27 +119,29 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 		target := getAddr(id)
 		udpConn := gonet.NewUDPConn(ipstack, &wq, ep)
 
-		for {
-			buf := pool.Get(pool.UDPBufferSize)
+		go func() {
+			for {
+				buf := pool.Get(pool.UDPBufferSize)
 
-			n, addr, err := udpConn.ReadFrom(buf)
-			if err != nil {
-				_ = pool.Put(buf)
-				break
-			}
+				n, addr, err := udpConn.ReadFrom(buf)
+				if err != nil {
+					_ = pool.Put(buf)
+					break
+				}
 
-			payload := buf[:n]
-			packet := &packet{
-				pc:      udpConn,
-				rAddr:   addr,
-				payload: payload,
-			}
+				payload := buf[:n]
+				packet := &packet{
+					pc:      udpConn,
+					rAddr:   addr,
+					payload: payload,
+				}
 
-			select {
-			case udpIn <- inbound.NewPacket(target, packet, C.TUN):
-			default:
+				select {
+				case udpIn <- inbound.NewPacket(target, packet, C.TUN):
+				default:
+				}
 			}
-		}
+		}()
 	})
 	ipstack.SetTransportProtocolHandler(udp.ProtocolNumber, udpFwd.HandlePacket)
 
