@@ -59,7 +59,7 @@ func transform(servers []NameServer, resolver *Resolver) []dnsClient {
 		}
 
 		if s.Net == "dnscrypt" {
-			ret = append(ret, &dnsCryptClient{addr: s.Addr})
+			ret = append(ret, newDnsCryptClient(s.Addr, s.Interface))
 			continue
 		}
 
