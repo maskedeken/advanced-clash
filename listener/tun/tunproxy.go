@@ -7,6 +7,7 @@ import (
 	"net"
 
 	adapters "github.com/Dreamacro/clash/adapter/inbound"
+	"github.com/Dreamacro/clash/common/pool"
 	C "github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/transport/socks5"
 
@@ -104,33 +105,47 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 	ipstack.SetTransportProtocolHandler(tcp.ProtocolNumber, tcpFwd.HandlePacket)
 
 	// UDP handler
-	ipstack.SetTransportProtocolHandler(udp.ProtocolNumber, tl.udpHandlePacket)
+	udpFwd := udp.NewForwarder(ipstack, func(r *udp.ForwarderRequest) {
+		var (
+			wq waiter.Queue
+			id = r.ID()
+		)
+		ep, err := r.CreateEndpoint(&wq)
+		if err != nil {
+			log.Warnln("cannot create UDP endpoint: %s", err)
+			return
+		}
+
+		target := getAddr(id)
+		udpConn := gonet.NewUDPConn(ipstack, &wq, ep)
+
+		for {
+			buf := pool.Get(pool.UDPBufferSize)
+
+			n, addr, err := udpConn.ReadFrom(buf)
+			if err != nil {
+				_ = pool.Put(buf)
+				break
+			}
+
+			payload := buf[:n]
+			packet := &packet{
+				pc:      udpConn,
+				rAddr:   addr,
+				payload: payload,
+			}
+
+			select {
+			case udpIn <- inbound.NewPacket(target, packet, C.TUN):
+			default:
+			}
+		}
+	})
+	ipstack.SetTransportProtocolHandler(udp.ProtocolNumber, udpFwd.HandlePacket)
 
 	log.Infoln("Tun adapter have interface name: %s", tundev.Name())
 	return tl, nil
 
-}
-
-func (t *tunAdapter) udpHandlePacket(id stack.TransportEndpointID, pkt *stack.PacketBuffer) bool {
-	// ref: gvisor pkg/tcpip/transport/udp/endpoint.go HandlePacket
-	hdr := header.UDP(pkt.TransportHeader().View().AsSlice())
-	if int(hdr.Length()) > pkt.Data().Size()+header.UDPMinimumSize {
-		// Malformed packet.
-		t.ipstack.Stats().UDP.MalformedPacketsReceived.Increment()
-		return true
-	}
-
-	target := getAddr(id)
-
-	packet := &fakeConn{
-		id:      id,
-		pkt:     pkt,
-		s:       t.ipstack,
-		payload: pkt.Data().AsRange().ToSlice(),
-	}
-	t.udpInbound <- adapters.NewPacket(target, packet, C.TUN)
-
-	return true
 }
 
 func getAddr(id stack.TransportEndpointID) socks5.Addr {
@@ -154,4 +169,28 @@ func getAddr(id stack.TransportEndpointID) socks5.Addr {
 		return addr
 	}
 
+}
+
+type packet struct {
+	pc      net.PacketConn
+	rAddr   net.Addr
+	payload []byte
+}
+
+func (c *packet) Data() []byte {
+	return c.payload
+}
+
+// WriteBack write UDP packet with source(ip, port) = `addr`
+func (c *packet) WriteBack(b []byte, _ net.Addr) (n int, err error) {
+	return c.pc.WriteTo(b, c.rAddr)
+}
+
+// LocalAddr returns the source IP/Port of UDP Packet
+func (c *packet) LocalAddr() net.Addr {
+	return c.rAddr
+}
+
+func (c *packet) Drop() {
+	_ = pool.Put(c.payload)
 }
