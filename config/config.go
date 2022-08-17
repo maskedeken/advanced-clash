@@ -506,9 +506,6 @@ func parseNameServer(servers []string) ([]dns.NameServer, error) {
 			case dnsstamps.StampProtoTypeTLS:
 				scheme = "tls"
 				host = stamp.ServerAddrStr
-			case dnsstamps.StampProtoTypeDoQ:
-				scheme = "quic"
-				host = stamp.ServerAddrStr
 			case dnsstamps.StampProtoTypePlain:
 				scheme = "udp"
 				host = stamp.ServerAddrStr
