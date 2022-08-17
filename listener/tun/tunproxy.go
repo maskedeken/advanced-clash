@@ -77,8 +77,7 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 
 	// TCP handler
 	// maximum number of half-open tcp connection set to 1024
-	// receive buffer size set to 20k
-	tcpFwd := tcp.NewForwarder(ipstack, 20*1024, 1024, func(r *tcp.ForwarderRequest) {
+	tcpFwd := tcp.NewForwarder(ipstack, 0, 2048, func(r *tcp.ForwarderRequest) {
 		var wq waiter.Queue
 		ep, err := r.CreateEndpoint(&wq)
 		if err != nil {
