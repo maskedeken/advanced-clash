@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/Dreamacro/clash/component/resolver"
 	"github.com/Dreamacro/clash/log"
 	"github.com/ameshkov/dnscrypt/v2"
+	"github.com/ameshkov/dnsstamps"
 	D "github.com/miekg/dns"
 )
 
@@ -98,7 +100,8 @@ func (dc *dnsCryptClient) exchangeDNSCrypt(m *D.Msg) (*D.Msg, error) {
 		ri, err := client.Dial(dc.addr)
 		if err != nil {
 			dc.Unlock()
-			return nil, fmt.Errorf("failed to fetch certificate info from %s", dc.addr)
+			stamp, _ := dnsstamps.NewServerStampFromString(dc.addr)
+			return nil, fmt.Errorf("failed to fetch certificate info from %s: %s", stamp.ServerAddrStr, err)
 		}
 
 		dc.client = client
@@ -127,6 +130,12 @@ func (dc *dnsCryptClient) exchangeDNSCrypt(m *D.Msg) (*D.Msg, error) {
 }
 
 func (dc *dnsCryptClient) dial(network, addr string) (net.Conn, error) {
+	if strings.HasPrefix(network, "tcp") {
+		network = "tcp"
+	} else {
+		network = "udp"
+	}
+
 	options := []dialer.Option{}
 	if dc.iface != "" {
 		options = append(options, dialer.WithInterface(dc.iface))
