@@ -14,7 +14,6 @@ import (
 	"github.com/Dreamacro/clash/component/resolver"
 	"github.com/Dreamacro/clash/log"
 	"github.com/ameshkov/dnscrypt/v2"
-	"github.com/ameshkov/dnsstamps"
 	D "github.com/miekg/dns"
 )
 
@@ -100,8 +99,7 @@ func (dc *dnsCryptClient) exchangeDNSCrypt(m *D.Msg) (*D.Msg, error) {
 		ri, err := client.Dial(dc.addr)
 		if err != nil {
 			dc.Unlock()
-			stamp, _ := dnsstamps.NewServerStampFromString(dc.addr)
-			return nil, fmt.Errorf("failed to fetch certificate info from %s: %s", stamp.ServerAddrStr, err)
+			return nil, fmt.Errorf("failed to fetch certificate info: %s", err)
 		}
 
 		dc.client = client
