@@ -43,8 +43,8 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
-github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3 h1:KJ1jwMtmw8W/PQ3CoJrOEmj7rBNvW02PkgrPuNnIZVc=
-github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3/go.mod h1:+TEK/TSTwN6CgYwHBYyfth3r3pfNNBBAmIwepvFhmKw=
+github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3 h1:lCKd5zxob2wKPQ4T2w6Zk0cw6J0B1VR1iHhmSJPcy1o=
+github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3/go.mod h1:+TEK/TSTwN6CgYwHBYyfth3r3pfNNBBAmIwepvFhmKw=
 github.com/mdlayher/ethernet v0.0.0-20190606142754-0394541c37b7/go.mod h1:U6ZQobyTjI/tJyq2HG+i/dfSoFUt8/aZCM+GKtmFk/Y=
 github.com/mdlayher/netlink v0.0.0-20190313131330-258ea9dff42c/go.mod h1:eQB3mZE4aiYnlUsyGGCOpPETfdQq4Jhsgf1fk3cwQaA=
 github.com/mdlayher/netlink v0.0.0-20190409211403-11939a169225/go.mod h1:eQB3mZE4aiYnlUsyGGCOpPETfdQq4Jhsgf1fk3cwQaA=

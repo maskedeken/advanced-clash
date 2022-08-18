@@ -44,4 +44,4 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
 
-replace github.com/ameshkov/dnscrypt/v2 => github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3
+replace github.com/ameshkov/dnscrypt/v2 => github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3
