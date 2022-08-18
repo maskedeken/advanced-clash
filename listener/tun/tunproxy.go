@@ -25,13 +25,6 @@ import (
 	"gvisor.dev/gvisor/pkg/waiter"
 )
 
-// tunAdapter is the wraper of Device
-type tunAdapter struct {
-	Device
-	ipstack    *stack.Stack
-	udpInbound chan<- *inbound.PacketAdapter
-}
-
 // NewTun creates Tun Device
 func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) (Device, error) {
 
@@ -52,13 +45,7 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 	})
 	nicID := tcpip.NICID(ipstack.UniqueID())
 
-	tl := &tunAdapter{
-		Device:     tundev,
-		ipstack:    ipstack,
-		udpInbound: udpIn,
-	}
-
-	if err := ipstack.CreateNIC(nicID, tl.Device); err != nil {
+	if err := ipstack.CreateNIC(nicID, tundev); err != nil {
 		return nil, fmt.Errorf("fail to create NIC in ipstack: %v", err)
 	}
 
@@ -146,7 +133,7 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 	ipstack.SetTransportProtocolHandler(udp.ProtocolNumber, udpFwd.HandlePacket)
 
 	log.Infoln("Tun adapter have interface name: %s", tundev.Name())
-	return tl, nil
+	return tundev, nil
 
 }
 
