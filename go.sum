@@ -238,8 +238,8 @@ github.com/marten-seemann/qtls-go1-18 v0.1.2 h1:JH6jmzbduz0ITVQ7ShevK10Av5+jBEKA
 github.com/marten-seemann/qtls-go1-18 v0.1.2/go.mod h1:mJttiymBAByA49mhlNZZGrH5u1uXYZJ+RW28Py7f4m4=
 github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1 h1:7m/WlWcSROrcK5NxuXaxYD32BZqe/LEEnBrWcH/cOqQ=
 github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1/go.mod h1:5HTDWtVudo/WFsHKRNuOhWlbdjrfs5JHrYb0wIJqGpI=
-github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3 h1:KJ1jwMtmw8W/PQ3CoJrOEmj7rBNvW02PkgrPuNnIZVc=
-github.com/maskedeken/dnscrypt/v2 v2.0.0-20220816092706-de43dce2f9b3/go.mod h1:+TEK/TSTwN6CgYwHBYyfth3r3pfNNBBAmIwepvFhmKw=
+github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3 h1:lCKd5zxob2wKPQ4T2w6Zk0cw6J0B1VR1iHhmSJPcy1o=
+github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3/go.mod h1:+TEK/TSTwN6CgYwHBYyfth3r3pfNNBBAmIwepvFhmKw=
 github.com/maskedeken/hysteria v0.0.0-20220814073127-68a3c2ae187b h1:bZwAv5rXxpfHks0oAb4djb74bc77nsjgRKO1w7OmgYk=
 github.com/maskedeken/hysteria v0.0.0-20220814073127-68a3c2ae187b/go.mod h1:Bl5WaawveCtUhZoCVqhtD4GBGSrqxN1R+RLSbl756gU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0jegS5sx/RkqARlsWZ6pIwiU=
