@@ -25,6 +25,18 @@ import (
 	"gvisor.dev/gvisor/pkg/waiter"
 )
 
+// tunAdapter is the wraper of Device
+type tunAdapter struct {
+	Device
+	ipstack *stack.Stack
+}
+
+func (t *tunAdapter) Close() (err error) {
+	err = t.Device.Close()
+	t.ipstack.Close()
+	return err
+}
+
 // NewTun creates Tun Device
 func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound.PacketAdapter) (Device, error) {
 
@@ -43,9 +55,14 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 		NetworkProtocols:   []stack.NetworkProtocolFactory{ipv4.NewProtocol, ipv6.NewProtocol},
 		TransportProtocols: []stack.TransportProtocolFactory{tcp.NewProtocol, udp.NewProtocol},
 	})
-	nicID := tcpip.NICID(ipstack.UniqueID())
 
-	if err := ipstack.CreateNIC(nicID, tundev); err != nil {
+	tl := &tunAdapter{
+		Device:  tundev,
+		ipstack: ipstack,
+	}
+
+	nicID := tcpip.NICID(ipstack.UniqueID())
+	if err := ipstack.CreateNIC(nicID, tl); err != nil {
 		return nil, fmt.Errorf("fail to create NIC in ipstack: %v", err)
 	}
 
@@ -132,9 +149,8 @@ func NewTun(deviceName string, tcpIn chan<- C.ConnContext, udpIn chan<- *inbound
 	})
 	ipstack.SetTransportProtocolHandler(udp.ProtocolNumber, udpFwd.HandlePacket)
 
-	log.Infoln("Tun adapter have interface name: %s", tundev.Name())
-	return tundev, nil
-
+	log.Infoln("Tun adapter have interface name: %s", tl.Name())
+	return tl, nil
 }
 
 func getAddr(id stack.TransportEndpointID) socks5.Addr {
