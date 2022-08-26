@@ -29,6 +29,7 @@ type Option struct {
 	ALPN           []string
 	ServerName     string
 	SkipCertVerify bool
+	XUDP           bool
 }
 
 type WebsocketOption struct {
@@ -96,14 +97,20 @@ func (c *Client) WriteHeader(w io.Writer, dst *vmess.DstAddr) error {
 
 	command := vmess.CommandTCP
 	if dst.UDP {
-		command = vmess.CommandUDP
+		if c.option.XUDP {
+			command = vmess.CommandMUX
+		} else {
+			command = vmess.CommandUDP
+		}
 	}
 	buf.WriteByte(command) // command
 
-	// Port AddrType Addr
-	binary.Write(buf, binary.BigEndian, uint16(dst.Port))
-	buf.WriteByte(dst.AddrType)
-	buf.Write(dst.Addr)
+	if command != vmess.CommandMUX {
+		// Port AddrType Addr
+		binary.Write(buf, binary.BigEndian, uint16(dst.Port))
+		buf.WriteByte(dst.AddrType)
+		buf.Write(dst.Addr)
+	}
 
 	_, err := w.Write(buf.Bytes())
 	return err

@@ -40,6 +40,7 @@ var CipherMapping = map[string]byte{
 const (
 	CommandTCP byte = 1
 	CommandUDP byte = 2
+	CommandMUX byte = 3
 )
 
 // Addr types
