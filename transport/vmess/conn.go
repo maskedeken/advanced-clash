@@ -38,6 +38,7 @@ type Conn struct {
 	isAead      bool
 
 	received bool
+	xudp     bool
 }
 
 func (vc *Conn) Write(b []byte) (int, error) {
@@ -80,16 +81,23 @@ func (vc *Conn) sendRequest() error {
 	// P Sec Reserve Cmd
 	buf.WriteByte(byte(p<<4) | byte(vc.security))
 	buf.WriteByte(0)
-	if vc.dst.UDP {
-		buf.WriteByte(CommandUDP)
-	} else {
-		buf.WriteByte(CommandTCP)
-	}
 
-	// Port AddrType Addr
-	binary.Write(buf, binary.BigEndian, uint16(vc.dst.Port))
-	buf.WriteByte(vc.dst.AddrType)
-	buf.Write(vc.dst.Addr)
+	command := CommandTCP
+	if vc.dst.UDP {
+		if vc.xudp {
+			command = CommandMUX
+		} else {
+			command = CommandUDP
+		}
+	}
+	buf.WriteByte(command)
+
+	if command != CommandMUX {
+		// Port AddrType Addr
+		binary.Write(buf, binary.BigEndian, uint16(vc.dst.Port))
+		buf.WriteByte(vc.dst.AddrType)
+		buf.Write(vc.dst.Addr)
+	}
 
 	// padding
 	if p > 0 {
@@ -198,7 +206,7 @@ func hashTimestamp(t time.Time) []byte {
 }
 
 // newConn return a Conn instance
-func newConn(conn net.Conn, id *ID, dst *DstAddr, security Security, isAead bool) (*Conn, error) {
+func newConn(conn net.Conn, id *ID, dst *DstAddr, security Security, isAead bool, xudp bool) (*Conn, error) {
 	randBytes := make([]byte, 33)
 	rand.Read(randBytes)
 	reqBodyIV := make([]byte, 16)
@@ -268,6 +276,7 @@ func newConn(conn net.Conn, id *ID, dst *DstAddr, security Security, isAead bool
 		writer:      writer,
 		security:    security,
 		isAead:      isAead,
+		xudp:        xudp,
 	}
 	if err := c.sendRequest(); err != nil {
 		return nil, err
