@@ -86,16 +86,20 @@ func (c *XUDPConn) ReadFrom(b []byte) (int, net.Addr, error) {
 	var packetLength uint16
 	var err error
 	var udpAddr *net.UDPAddr
+	buffer := pool.GetBuffer()
+	defer pool.PutBuffer(buffer)
+
 	for {
-		if err := binary.Read(c.Conn, binary.BigEndian, &headerLength); err != nil {
+		if err = binary.Read(c.Conn, binary.BigEndian, &headerLength); err != nil {
 			return 0, nil, err
 		}
 
-		header := make([]byte, headerLength)
-		if _, err := io.ReadFull(c.Conn, header); err != nil {
+		buffer.Reset()
+		if _, err = io.CopyN(buffer, c.Conn, int64(headerLength)); err != nil {
 			return 0, nil, err
 		}
 
+		header := buffer.Bytes()
 		discard := false
 		switch header[2] {
 		case 2:
