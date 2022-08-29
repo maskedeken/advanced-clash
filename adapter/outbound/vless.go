@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Dreamacro/clash/common/xudp"
 	"github.com/Dreamacro/clash/component/dialer"
 	"github.com/Dreamacro/clash/component/resolver"
 	C "github.com/Dreamacro/clash/constant"
@@ -26,6 +27,7 @@ type VlessOption struct {
 	Port           int       `proxy:"port"`
 	UUID           string    `proxy:"uuid"`
 	UDP            bool      `proxy:"udp,omitempty"`
+	XUDP           bool      `proxy:"xudp,omitempty"`
 	ALPN           []string  `proxy:"alpn,omitempty"`
 	Network        string    `proxy:"network,omitempty"`
 	WSOpts         WSOptions `proxy:"ws-opts,omitempty"`
@@ -108,7 +110,13 @@ func (v *Vless) ListenPacketContext(ctx context.Context, metadata *C.Metadata, o
 		return nil, err
 	}
 
-	return newPacketConn(vless.NewVlessPacketConn(c, metadata.UDPAddr()), v), nil
+	var packetConn net.PacketConn
+	if v.option.XUDP {
+		packetConn = xudp.NewXUDPConn(c, metadata.UDPAddr())
+	} else {
+		packetConn = vless.NewVlessPacketConn(c, metadata.UDPAddr())
+	}
+	return newPacketConn(packetConn, v), nil
 }
 
 func NewVless(option VlessOption) (v *Vless, err error) {
@@ -119,6 +127,7 @@ func NewVless(option VlessOption) (v *Vless, err error) {
 		ALPN:           option.ALPN,
 		ServerName:     option.Server,
 		SkipCertVerify: option.SkipCertVerify,
+		XUDP:           option.XUDP,
 	}
 
 	if option.ServerName != "" {

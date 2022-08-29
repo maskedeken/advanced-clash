@@ -9,10 +9,10 @@ require (
 	github.com/digineo/go-ipset/v2 v2.2.1
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.1
-	github.com/go-chi/render v1.0.1
+	github.com/go-chi/render v1.0.2
 	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/gorilla/websocket v1.5.0
-	github.com/insomniacslk/dhcp v0.0.0-20220504074936-1ca156eafb9f
+	github.com/insomniacslk/dhcp v0.0.0-20220822114210-de18a9d48e84
 	github.com/lucas-clemente/quic-go v0.28.1
 	github.com/mdlayher/netlink v1.1.1
 	github.com/miekg/dns v1.1.50
@@ -22,12 +22,12 @@ require (
 	github.com/ti-mo/netfilter v0.2.0
 	github.com/tobyxdd/hysteria v1.1.0
 	go.etcd.io/bbolt v1.3.6
-	go.uber.org/atomic v1.9.0
+	go.uber.org/atomic v1.10.0
 	go.uber.org/automaxprocs v1.5.1
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
-	golang.org/x/net v0.0.0-20220706163947-c90051bbdb60
-	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
-	golang.org/x/sys v0.0.0-20220804214406-8e32c043e418
+	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
+	golang.org/x/net v0.0.0-20220822230855-b0a4917ee28c
+	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
+	golang.org/x/sys v0.0.0-20220825204002-c680a09ffe64
 	golang.zx2c4.com/wireguard v0.0.0-20220703234212-c31a7b1ab478
 	gopkg.in/yaml.v3 v3.0.1
 	gvisor.dev/gvisor v0.0.0-20220806021445-2efadcc075d2
@@ -36,6 +36,7 @@ require (
 require (
 	github.com/AdguardTeam/golibs v0.4.2 // indirect
 	github.com/aead/poly1305 v0.0.0-20180717145839-3fee0db0b635 // indirect
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect

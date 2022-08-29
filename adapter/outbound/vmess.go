@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Dreamacro/clash/common/xudp"
 	"github.com/Dreamacro/clash/component/dialer"
 	"github.com/Dreamacro/clash/component/resolver"
 	C "github.com/Dreamacro/clash/constant"
@@ -40,6 +41,7 @@ type VmessOption struct {
 	AlterID        int          `proxy:"alterId"`
 	Cipher         string       `proxy:"cipher"`
 	UDP            bool         `proxy:"udp,omitempty"`
+	XUDP           bool         `proxy:"xudp,omitempty"`
 	Network        string       `proxy:"network,omitempty"`
 	TLS            bool         `proxy:"tls,omitempty"`
 	SkipCertVerify bool         `proxy:"skip-cert-verify,omitempty"`
@@ -250,7 +252,13 @@ func (v *Vmess) ListenPacketContext(ctx context.Context, metadata *C.Metadata, o
 		return nil, fmt.Errorf("new vmess client error: %v", err)
 	}
 
-	return newPacketConn(&vmessPacketConn{Conn: c, rAddr: metadata.UDPAddr()}, v), nil
+	var packetConn net.PacketConn
+	if v.option.XUDP {
+		packetConn = xudp.NewXUDPConn(c, metadata.UDPAddr())
+	} else {
+		packetConn = &vmessPacketConn{Conn: c, rAddr: metadata.UDPAddr()}
+	}
+	return newPacketConn(packetConn, v), nil
 }
 
 func NewVmess(option VmessOption) (*Vmess, error) {
@@ -262,6 +270,7 @@ func NewVmess(option VmessOption) (*Vmess, error) {
 		HostName: option.Server,
 		Port:     strconv.Itoa(option.Port),
 		IsAead:   option.AlterID == 0,
+		XUDP:     option.XUDP,
 	})
 	if err != nil {
 		return nil, err
