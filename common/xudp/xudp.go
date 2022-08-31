@@ -9,7 +9,12 @@ import (
 	"net"
 
 	"github.com/Dreamacro/clash/common/pool"
-	"github.com/Dreamacro/clash/transport/vmess"
+)
+
+// Addr types
+const (
+	AtypIPv4 byte = 1
+	AtypIPv6 byte = 3
 )
 
 func NewXUDPConn(c net.Conn, addr *net.UDPAddr) *XUDPConn {
@@ -147,10 +152,10 @@ func writeAddressPort(writer io.Writer, udpAddr *net.UDPAddr) {
 	writer.Write([]byte{byte(port >> 8), byte(port)})
 
 	if ip4 := udpAddr.IP.To4(); ip4 != nil {
-		writer.Write([]byte{vmess.AtypIPv4})
+		writer.Write([]byte{AtypIPv4})
 		writer.Write(ip4)
 	} else {
-		writer.Write([]byte{vmess.AtypIPv6})
+		writer.Write([]byte{AtypIPv6})
 		writer.Write(udpAddr.IP.To16())
 	}
 }
@@ -163,13 +168,13 @@ func readAddressPort(p []byte) (*net.UDPAddr, error) {
 
 	var ip net.IP
 	switch p[2] {
-	case vmess.AtypIPv4:
+	case AtypIPv4:
 		if l < 3+net.IPv4len {
 			return nil, errors.New("invalid ipv4 address")
 		}
 
 		ip = net.IP(p[3 : 3+net.IPv4len])
-	case vmess.AtypIPv6:
+	case AtypIPv6:
 		if l < 3+net.IPv6len {
 			return nil, errors.New("invalid ipv6 address")
 		}
