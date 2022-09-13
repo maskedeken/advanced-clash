@@ -240,8 +240,8 @@ github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1 h1:7m/WlWcSROrcK5NxuXaxYD32B
 github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1/go.mod h1:5HTDWtVudo/WFsHKRNuOhWlbdjrfs5JHrYb0wIJqGpI=
 github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3 h1:lCKd5zxob2wKPQ4T2w6Zk0cw6J0B1VR1iHhmSJPcy1o=
 github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3/go.mod h1:+TEK/TSTwN6CgYwHBYyfth3r3pfNNBBAmIwepvFhmKw=
-github.com/maskedeken/hysteria v0.0.0-20220814073127-68a3c2ae187b h1:bZwAv5rXxpfHks0oAb4djb74bc77nsjgRKO1w7OmgYk=
-github.com/maskedeken/hysteria v0.0.0-20220814073127-68a3c2ae187b/go.mod h1:Bl5WaawveCtUhZoCVqhtD4GBGSrqxN1R+RLSbl756gU=
+github.com/maskedeken/hysteria v0.0.0-20220831060254-bf89232ef390 h1:bQSHaI/lKHEhSeAKtGe2beITCpL5T28a9r4mPNYyUjQ=
+github.com/maskedeken/hysteria v0.0.0-20220831060254-bf89232ef390/go.mod h1:Bl5WaawveCtUhZoCVqhtD4GBGSrqxN1R+RLSbl756gU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0jegS5sx/RkqARlsWZ6pIwiU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/mdlayher/ethernet v0.0.0-20190606142754-0394541c37b7/go.mod h1:U6ZQobyTjI/tJyq2HG+i/dfSoFUt8/aZCM+GKtmFk/Y=

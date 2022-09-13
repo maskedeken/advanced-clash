@@ -74,7 +74,7 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )
 
-replace github.com/tobyxdd/hysteria => github.com/maskedeken/hysteria v0.0.0-20220814073127-68a3c2ae187b
+replace github.com/tobyxdd/hysteria => github.com/maskedeken/hysteria v0.0.0-20220831060254-bf89232ef390
 
 replace github.com/lucas-clemente/quic-go => github.com/tobyxdd/quic-go v0.28.2-0.20220806194731-5be744e08984
 
