@@ -7,6 +7,7 @@ import (
 	"net"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Dreamacro/clash/component/dialer"
@@ -15,12 +16,9 @@ import (
 	"github.com/Dreamacro/clash/transport/socks5"
 	"github.com/lucas-clemente/quic-go"
 
-	"github.com/lucas-clemente/quic-go/congestion"
-	hyCongestion "github.com/tobyxdd/hysteria/pkg/congestion"
-	"github.com/tobyxdd/hysteria/pkg/core"
-	"github.com/tobyxdd/hysteria/pkg/obfs"
-	"github.com/tobyxdd/hysteria/pkg/pmtud_fix"
-	"github.com/tobyxdd/hysteria/pkg/transport"
+	"github.com/HyNetwork/hysteria/pkg/core"
+	"github.com/HyNetwork/hysteria/pkg/pmtud"
+	"github.com/HyNetwork/hysteria/pkg/transport/pktconns"
 )
 
 const (
@@ -31,8 +29,7 @@ const (
 	DefaultConnectionReceiveWindow = 67108864 // 64 MB/s
 	DefaultMaxIncomingStreams      = 1024
 
-	DefaultALPN     = "hysteria"
-	DefaultProtocol = "udp"
+	DefaultALPN = "hysteria"
 
 	KeepAlivePeriod = 10 * time.Second
 )
@@ -93,12 +90,6 @@ type HysteriaOption struct {
 }
 
 func NewHysteria(option HysteriaOption) (*Hysteria, error) {
-	clientTransport := &transport.ClientTransport{
-		Dialer: &net.Dialer{
-			Timeout: 8 * time.Second,
-		},
-	}
-
 	addr := net.JoinHostPort(option.Server, strconv.Itoa(option.Port))
 	serverName := option.Server
 	if option.SNI != "" {
@@ -125,9 +116,12 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 		DisablePathMTUDiscovery:        option.DisableMTUDiscovery,
 		EnableDatagrams:                true,
 	}
-	if option.Protocol == "" {
-		option.Protocol = DefaultProtocol
+
+	clientPacketConnFunc, err := getClientPacketConnFunc(option.Protocol, option.Obfs)
+	if err != nil {
+		return nil, err
 	}
+
 	if option.ReceiveWindowConn == 0 {
 		quicConfig.InitialStreamReceiveWindow = DefaultStreamReceiveWindow
 		quicConfig.MaxStreamReceiveWindow = DefaultStreamReceiveWindow
@@ -136,14 +130,8 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 		quicConfig.InitialConnectionReceiveWindow = DefaultConnectionReceiveWindow
 		quicConfig.MaxConnectionReceiveWindow = DefaultConnectionReceiveWindow
 	}
-	if !quicConfig.DisablePathMTUDiscovery && pmtud_fix.DisablePathMTUDiscovery {
+	if !quicConfig.DisablePathMTUDiscovery && pmtud.DisablePathMTUDiscovery {
 		log.Infoln("hysteria: Path MTU Discovery is not yet supported on this platform")
-	}
-
-	var auth = []byte(option.AuthString)
-	var obfuscator obfs.Obfuscator
-	if len(option.Obfs) > 0 {
-		obfuscator = obfs.NewXPlusObfuscator([]byte(option.Obfs))
 	}
 
 	up := stringToBps(option.Up)
@@ -157,10 +145,9 @@ func NewHysteria(option HysteriaOption) (*Hysteria, error) {
 	}
 
 	client, err := core.NewClient(
-		addr, option.Protocol, auth, tlsConfig, quicConfig, clientTransport, up, down, func(refBPS uint64) congestion.CongestionControl {
-			return hyCongestion.NewBrutalSender(congestion.ByteCount(refBPS))
-		}, obfuscator,
-	)
+		addr, []byte(option.AuthString), tlsConfig, quicConfig, clientPacketConnFunc, up, down, func(err error) {
+			log.Debugln("Connection to %s lost, reconnecting...", addr)
+		})
 	if err != nil {
 		return nil, fmt.Errorf("hysteria %s create error: %w", addr, err)
 	}
@@ -214,12 +201,24 @@ func stringToBps(s string) uint64 {
 	return n
 }
 
+func getClientPacketConnFunc(protocol, obfsPassword string) (pktconns.ClientPacketConnFunc, error) {
+	proto := strings.ToLower(protocol)
+	switch proto {
+	case "", "udp":
+		return pktconns.NewClientUDPConnFunc(obfsPassword), nil
+	case "wechat", "wechat-video":
+		return pktconns.NewClientWeChatConnFunc(obfsPassword), nil
+	default:
+		return nil, fmt.Errorf("Unsupported protocol: %s", protocol)
+	}
+}
+
 type hyPacketConn struct {
-	core.UDPConn
+	core.HyUDPConn
 }
 
 func (c *hyPacketConn) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
-	b, addrStr, err := c.UDPConn.ReadFrom()
+	b, addrStr, err := c.HyUDPConn.ReadFrom()
 	if err != nil {
 		return
 	}
@@ -229,7 +228,7 @@ func (c *hyPacketConn) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 }
 
 func (c *hyPacketConn) WriteTo(p []byte, addr net.Addr) (n int, err error) {
-	err = c.UDPConn.WriteTo(p, socks5.ParseAddrToSocksAddr(addr).String())
+	err = c.HyUDPConn.WriteTo(p, socks5.ParseAddrToSocksAddr(addr).String())
 	if err != nil {
 		return
 	}

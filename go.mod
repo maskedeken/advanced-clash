@@ -3,6 +3,7 @@ module github.com/Dreamacro/clash
 go 1.18
 
 require (
+	github.com/HyNetwork/hysteria v1.2.2
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da
 	github.com/ameshkov/dnscrypt/v2 v2.2.3
 	github.com/ameshkov/dnsstamps v1.0.3
@@ -13,21 +14,20 @@ require (
 	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/gorilla/websocket v1.5.0
 	github.com/insomniacslk/dhcp v0.0.0-20220822114210-de18a9d48e84
-	github.com/lucas-clemente/quic-go v0.28.1
+	github.com/lucas-clemente/quic-go v0.30.0
 	github.com/mdlayher/netlink v1.1.1
 	github.com/miekg/dns v1.1.50
 	github.com/oschwald/geoip2-golang v1.8.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.0
 	github.com/ti-mo/netfilter v0.2.0
-	github.com/tobyxdd/hysteria v1.1.0
 	go.etcd.io/bbolt v1.3.6
 	go.uber.org/atomic v1.10.0
 	go.uber.org/automaxprocs v1.5.1
 	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
 	golang.org/x/net v0.0.0-20220822230855-b0a4917ee28c
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
-	golang.org/x/sys v0.0.0-20220825204002-c680a09ffe64
+	golang.org/x/sys v0.0.0-20220908164124-27713097b956
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -37,23 +37,20 @@ require (
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/coreos/go-iptables v0.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
+	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40 // indirect
-	github.com/marten-seemann/qtls-go1-16 v0.1.5 // indirect
-	github.com/marten-seemann/qtls-go1-17 v0.1.2 // indirect
-	github.com/marten-seemann/qtls-go1-18 v0.1.2 // indirect
-	github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1 // indirect
+	github.com/marten-seemann/qtls-go1-18 v0.1.3 // indirect
+	github.com/marten-seemann/qtls-go1-19 v0.1.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/nxadm/tail v1.4.8 // indirect
-	github.com/onsi/ginkgo v1.16.4 // indirect
+	github.com/onsi/ginkgo/v2 v2.2.0 // indirect
 	github.com/oschwald/maxminddb-golang v1.10.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -66,16 +63,15 @@ require (
 	github.com/txthinking/socks5 v0.0.0-20220212043548-414499347d4a // indirect
 	github.com/txthinking/x v0.0.0-20210326105829-476fab902fbe // indirect
 	github.com/u-root/uio v0.0.0-20210528114334-82958018845c // indirect
-	golang.org/x/mod v0.5.1 // indirect
+	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.9 // indirect
-	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
+	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )
 
-replace github.com/tobyxdd/hysteria => github.com/maskedeken/hysteria v0.0.0-20220831060254-bf89232ef390
+replace github.com/HyNetwork/hysteria => github.com/maskedeken/hysteria v0.0.0-20221031100213-b5fb1852a32c
 
-replace github.com/lucas-clemente/quic-go => github.com/tobyxdd/quic-go v0.28.2-0.20220806194731-5be744e08984
+replace github.com/lucas-clemente/quic-go => github.com/HyNetwork/quic-go v0.30.1-0.20221023055600-93b146ab9c48
 
 replace github.com/ameshkov/dnscrypt/v2 => github.com/maskedeken/dnscrypt/v2 v2.0.0-20220818020559-f0943e6ea1f3
