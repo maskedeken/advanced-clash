@@ -88,7 +88,9 @@ type Profile struct {
 }
 
 // Experimental config
-type Experimental struct{}
+type Experimental struct {
+	UDPFallbackMatch bool `yaml:"udp-fallback-match"`
+}
 
 // Config is clash config manager
 type Config struct {
